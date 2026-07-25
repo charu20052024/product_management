@@ -1,0 +1,44 @@
+/* Responsive Design */
+
+.container {
+    width: 90%;
+    margin: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+@media screen and (max-width: 768px) {
+
+    h1 {
+        font-size: 25px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    table {
+        font-size: 14px;
+        min-width: 1000px;
+    }
+
+    img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+    }
+
+}
