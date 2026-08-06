@@ -5,7 +5,7 @@ $conn = mysqli_connect(
     "root",                                 // MySQL username
     "EtlfKutXgOyqKGmngHwDRhVfRZVBFEuQ",                  // MySQL password
     "railway",                              // Database name
-    3306                                    // MySQL port
+    3307                                    // MySQL port
 );
 
 if (!$conn) {
