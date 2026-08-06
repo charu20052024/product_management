@@ -1,2 +1,0 @@
-[phases.setup]
-aptPkgs = ["php8.4-mysqli"]
