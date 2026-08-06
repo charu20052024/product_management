@@ -1,11 +1,11 @@
 <?php
 
 $conn = mysqli_connect(
-    "mysql.railway.internal",
-    "root",
-    "dVoxYtVgCwQmvlfnAxaExKhdMtEKkRMh",
-    "railway",
-    3306
+    "mysql-production-55b5.up.railway.app", // Railway public host
+    "root",                                 // MySQL username
+    "EtlfKutXgOyqKGmngHwDRhVfRZVBFEuQ",                  // MySQL password
+    "railway",                              // Database name
+    3306                                    // MySQL port
 );
 
 if (!$conn) {
