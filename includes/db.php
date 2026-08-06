@@ -1,21 +1,13 @@
 <?php
-
-$host = getenv("MYSQLHOST");
-$user = getenv("MYSQLUSER");
-$password = getenv("MYSQLPASSWORD");
-$db = getenv("MYSQLDATABASE");
-$port = getenv("MYSQLPORT");
-
 $conn = mysqli_connect(
-    $host,
-    $user,
-    $password,
-    $db,
-    $port
+    "your-host",
+    "your-username",
+    "your-password",
+    "your-database",
+    3306
 );
 
-if(!$conn){
-    die("Database Connection Failed: ".mysqli_connect_error());
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
-
 ?>
