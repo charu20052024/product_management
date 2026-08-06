@@ -1,7 +1,15 @@
 <?php
+$conn = new mysqli(
+    "altaria.proxy.rlwy.net",
+    "root",
+    "EtlfKutXgOyqKGmngHwDRhVfRZVBFEuQ",
+    "railway",
+    54935
+);
 
-include "includes/db.php";
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
-echo "Database Connected Successfully";
-
+echo "Database connected successfully!";
 ?>

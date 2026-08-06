@@ -1,17 +1,14 @@
+
 <?php
+$conn = new mysqli(
+    "altaria.proxy.rlwy.net",
+    "root",
+    "EtlfKutXgOyqKGmngHwDRhVfRZVBFEuQ",
+    "railway",
+    54935
+);
 
-$host = "altaria.proxy.rlwy.net";
-$user = "root";
-$password = "EtlfKutXgOyqKGmngHwDRhVfRZVBFEuQ";
-$database = "railway";
-$port = 54935;
-
-$conn = mysqli_connect($host, $user, $password, $database, $port);
-
-if (!$conn) {
-    die("Database connection failed: " . mysqli_connect_error());
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
-
-echo "Database Connected";
-
 ?>
