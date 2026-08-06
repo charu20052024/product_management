@@ -1,10 +1,11 @@
+
 <?php
 $conn = mysqli_connect(
-    "your-host",
-    "your-username",
-    "your-password",
-    "your-database",
-    3306
+    getenv("mysql.railway.internal"),
+    getenv("root"),
+    getenv("VoxYtVgCwQmvlfnAxaExKhdMtEKkRMh"),
+    getenv("product_management"),
+    getenv("3306")
 );
 
 if (!$conn) {
