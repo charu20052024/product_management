@@ -1,19 +1,22 @@
 
 <?php
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-echo "DB START<br>";
+$host = getenv("altaria.proxy.rlwy.net:54935");
+$user = getenv("root");
+$password = getenv("EtlfKutXgOyqKGmngHwDRhVfRZVBFEuQ");
+$database = getenv("railway");
+$port = getenv("54935");
 
 $conn = mysqli_connect(
-    "mysql-production-18ee.up.railway.app",
-    "root",
-    "EtlfKutXgOyqKGmngHwDRhVfRZVBFEuQ",
-    "railway",
-    33060
+    $host,
+    $user,
+    $password,
+    $database,
+    $port
 );
 
-echo "DB CONNECTED";
+if (!$conn) {
+    die("Database connection failed: " . mysqli_connect_error());
+}
 
 ?>
