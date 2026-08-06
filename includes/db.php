@@ -1,12 +1,13 @@
 <?php
-$host = "localhost";
-$user = "root";
-$password = "";
-$database = "product_db";
+$host = getenv("mysql.railway.internal");
+$user = getenv("root");
+$pass = getenv("dVoxYtVgCwQmvlfnAxaExKhdMtEKkRMh");
+$db   = getenv("railway");
+$port = getenv("3306");
 
-$conn = mysqli_connect($host, $user, $password, $database);
+$conn = mysqli_connect($host, $user, $pass, $db, $port);
 
 if (!$conn) {
-    die("Connection Failed: " . mysqli_connect_error());
+    die("Connection failed: " . mysqli_connect_error());
 }
 ?>
