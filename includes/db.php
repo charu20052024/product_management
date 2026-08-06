@@ -1,14 +1,15 @@
-
 <?php
+
 $conn = mysqli_connect(
-    getenv("mysql.railway.internal"),
-    getenv("root"),
-    getenv("VoxYtVgCwQmvlfnAxaExKhdMtEKkRMh"),
-    getenv("product_management"),
-    getenv("3306")
+    "mysql.railway.internal",
+    "root",
+    "dVoxYtVgCwQmvlfnAxaExKhdMtEKkRMh",
+    "railway",
+    3306
 );
 
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    die("Database Connection Failed: " . mysqli_connect_error());
 }
+
 ?>
