@@ -1,8 +1,6 @@
 {
-  "php": {
-    "extensions": [
-      "mysqli",
-      "pdo_mysql"
-    ]
-  }
+  "packages": [
+    "php84Extensions.mysqli",
+    "php84Extensions.pdo_mysql"
+  ]
 }
