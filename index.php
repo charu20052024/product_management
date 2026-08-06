@@ -2,21 +2,19 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 include "includes/db.php";
 
 $sql = "SELECT * FROM products ORDER BY id DESC";
 $result = mysqli_query($conn, $sql);
 
-echo "<pre>";
-echo "Number of products: " . mysqli_num_rows($result);
-echo "</pre>";
-
 if (!$result) {
     die("SQL Error: " . mysqli_error($conn));
 }
+
+echo "<pre>";
+echo "Number of products: " . mysqli_num_rows($result);
+echo "</pre>";
 ?>
 
 <!DOCTYPE html>

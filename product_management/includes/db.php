@@ -1,13 +1,16 @@
 <?php
 
-$host = "localhost";
-$user = "root";
-$password = "";
-$database = "product_db";
+$host = getenv("MYSQLHOST");
+$user = getenv("MYSQLUSER");
+$password = getenv("MYSQLPASSWORD");
+$database = getenv("MYSQLDATABASE");
+$port = getenv("MYSQLPORT");
 
-$conn = mysqli_connect($host, $user, $password, $database);
+$conn = mysqli_connect($host, $user, $password, $database, $port);
 
 if (!$conn) {
     die("Connection Failed: " . mysqli_connect_error());
 }
+
+echo "Database Connected";
 ?>
