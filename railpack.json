@@ -1,0 +1,8 @@
+{
+  "php": {
+    "extensions": [
+      "mysqli",
+      "pdo_mysql"
+    ]
+  }
+}
