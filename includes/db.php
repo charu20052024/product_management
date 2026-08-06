@@ -1,11 +1,18 @@
 <?php
 
-$conn = mysqli_connect(
+$conn = mysqli_init();
+
+mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
+
+mysqli_real_connect(
+    $conn,
     "mysql-production-18ee.up.railway.app",
     "root",
     "EtlfKutXgOyqKGmngHwDRhVfRZVBFEuQ",
     "railway",
-    33060
+    33060,
+    NULL,
+    MYSQLI_CLIENT_SSL
 );
 
 if (!$conn) {
