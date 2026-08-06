@@ -1,23 +1,19 @@
+
 <?php
 
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
-try {
+echo "DB START<br>";
 
-    $conn = mysqli_connect(
-        "mysql-production-18ee.up.railway.app:33060",  // Railway public host
-        "root",                                  // MySQL username
-        "EtlfKutXgOyqKGmngHwDRhVfRZVBFEuQ",                     // Railway MySQL password
-        "railway",                               // Database name
-        33060                                    // Railway public port
-    );
+$conn = mysqli_connect(
+    "mysql-production-18ee.up.railway.app",
+    "root",
+    "EtlfKutXgOyqKGmngHwDRhVfRZVBFEuQ",
+    "railway",
+    33060
+);
 
-    echo "Database Connected";
-
-} catch (mysqli_sql_exception $e) {
-
-    die("Database Connection Failed: " . $e->getMessage());
-
-}
+echo "DB CONNECTED";
 
 ?>
