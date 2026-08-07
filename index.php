@@ -1,828 +1,857 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+
 session_start();
 
-include "includes/db.php";
 
-$sql = "SELECT * FROM products ORDER BY id DESC";
-$result = mysqli_query($conn, $sql);
+require_once __DIR__ . "/includes/db.php";
 
-if (!$result) {
-    die("SQL Error: " . mysqli_error($conn));
-}
 
-echo "<pre>";
-echo "Number of products: " . mysqli_num_rows($result);
-echo "</pre>";
-?>
+// LOGIN CHECK
 
-<!DOCTYPE html>
-<html lang="en">
+if(!isset($_SESSION["user_id"])){
 
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Product Management System</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<style>
-
-/* =========================================
-   BASIC
-========================================= */
-
-body {
-    background: #f8f9fa;
-}
-
-.table img {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-}
-
-
-/* =========================================
-   HEADER - COMMON
-========================================= */
-
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 25px;
-}
-
-.page-title {
-    margin: 0;
-    font-weight: 600;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-<div class="desktop-products">
-
-    <!-- Product List Header -->
-    <div class="d-flex justify-content-between align-items-center mb-3 p-3">
-
-        <div>
-            <h5 class="mb-1">Product List</h5>
-
-            <small class="text-secondary">
-                Manage your products
-            </small>
-        </div>
-
-        <span class="badge bg-primary" id="productCount">
-            <?= mysqli_num_rows($result); ?> Products
-        </span>
-
-    </div>
-
-
-    <!-- Product Table -->
-    <div class="table-responsive">
-
-        <table class="table product-table">
-/* =========================================
-   DESKTOP TABLE - COMMON
-========================================= */
-
-.product-table {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    width: 100%;
-}
-
-.product-table th {
-    white-space: nowrap;
-    vertical-align: middle;
-}
-
-.product-table td {
-    vertical-align: middle;
-}
-
-.product-image {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-}
-
-
-/* =========================================
-   MOBILE CARDS
-========================================= */
-
-.mobile-products {
-    display: none;
-}
-
-
-/* =========================================
-   DESKTOP ONLY
-========================================= */
-
-@media (min-width: 769px) {
-
-    body {
-        background: #f5f7fb;
-    }
-
-    /* Main container */
-
-    .container {
-        max-width: 1450px !important;
-        width: 94%;
-        margin: 0 auto;
-        padding-top: 25px;
-    }
-
-
-    /* Header card */
-
-    .page-header {
-        background: #ffffff;
-
-        padding: 22px 25px;
-
-        border-radius: 14px;
-
-        border: 1px solid #e9ecef;
-
-        box-shadow: 0 3px 12px rgba(0,0,0,0.05);
-
-        box-sizing: border-box;
-
-        margin-bottom: 20px;
-    }
-
-
-    /* Title */
-
-    .page-title-area {
-        flex: 1;
-    }
-
-    .page-title {
-        font-size: 30px;
-        font-weight: 700;
-        color: #212529;
-        margin: 0;
-    }
-
-    .page-subtitle {
-        margin: 5px 0 0;
-        color: #6c757d;
-        font-size: 14px;
-    }
-
-
-    /* Header buttons */
-
-    .action-buttons {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-shrink: 0;
-    }
-
-    .action-buttons .btn {
-        min-height: 44px;
-        padding: 9px 18px;
-        border-radius: 8px;
-        font-weight: 500;
-        white-space: nowrap;
-        margin-bottom: 0;
-    }
-
-
-    /* Product table container */
-
-    .desktop-products {
-        width: 100%;
-
-        background: #ffffff;
-
-        border-radius: 14px;
-
-        border: 1px solid #e9ecef;
-
-        box-shadow: 0 3px 12px rgba(0,0,0,0.05);
-
-        overflow: hidden;
-    }
-
-
-    /* Table responsive wrapper */
-
-    .desktop-products .table-responsive {
-        width: 100%;
-        overflow-x: auto;
-    }
-
-
-    /* Table */
-
-    .product-table {
-        width: 100%;
-        margin: 0;
-        background: #ffffff;
-        border-radius: 0;
-    }
-
-
-    .product-table thead th {
-        background: #212529;
-        color: #ffffff;
-
-        font-size: 14px;
-        font-weight: 600;
-
-        padding: 14px 10px;
-
-        white-space: nowrap;
-        vertical-align: middle;
-
-        border-color: #343a40;
-    }
-
-
-    .product-table tbody td {
-        padding: 12px 10px;
-
-        font-size: 14px;
-
-        vertical-align: middle;
-
-        white-space: nowrap;
-    }
-
-
-    /* Product image */
-
-    .product-image {
-        width: 58px;
-        height: 58px;
-
-        object-fit: contain;
-
-        border-radius: 8px;
-
-        background: #f8f9fa;
-
-        padding: 3px;
-    }
-
-
-    /* Edit/Delete buttons */
-
-    .product-table .editProduct,
-    .product-table .deleteProduct {
-
-        width: 38px;
-        height: 38px;
-
-        padding: 0;
-
-        display: inline-flex;
-
-        align-items: center;
-        justify-content: center;
-
-        border-radius: 7px;
-
-        margin-right: 4px;
-    }
+    header("Location: auth/login.php");
+    exit();
 
 }
 
 
-/* =========================================
-   MOBILE VIEW
-========================================= */
+$username = $_SESSION["username"] ?? "User";
 
-@media (max-width: 768px) {
 
-    body {
-        background: #f8f9fa;
-    }
 
 
-    .container {
-        width: 100%;
-        padding: 12px;
-    }
+// =======================
+// ADD PRODUCT
+// =======================
 
+if(isset($_POST["add_product"])){
 
-    /* Header */
 
-    .page-header {
-        flex-direction: column;
-        align-items: stretch;
-        text-align: center;
-        gap: 15px;
+$product_name = trim($_POST["product_name"] ?? "");
 
-        padding: 15px 0;
-    }
+$product_code = trim($_POST["product_code"] ?? "");
 
+$category = trim($_POST["category"] ?? "");
 
-    .page-title {
-        font-size: 22px;
-    }
+$brand = trim($_POST["brand"] ?? "");
 
+$purchase_price = $_POST["purchase_price"] ?? 0;
 
-    .action-buttons {
-        justify-content: center;
-        width: 100%;
-    }
+$selling_price = $_POST["selling_price"] ?? 0;
 
+$quantity = $_POST["quantity"] ?? 0;
 
-    .action-buttons .btn {
-        flex: 1;
-        margin-bottom: 10px;
-    }
+$unit = $_POST["unit"] ?? "";
 
+$description = trim($_POST["description"] ?? "");
 
-    /* Hide desktop table */
 
-    .desktop-products {
-        display: none;
-    }
 
 
-    /* Show mobile cards */
+// IMAGE UPLOAD
 
-    .mobile-products {
-        display: block;
-    }
+$image = "";
 
 
-    /* Product Card */
+if(isset($_FILES["image"]) &&
+$_FILES["image"]["name"]!=""){
 
-    .product-card {
-        background: white;
 
-        border-radius: 15px;
+$image_name =
+time()."_".$_FILES["image"]["name"];
 
-        padding: 15px;
 
-        margin-bottom: 15px;
+$upload =
+"uploads/products/".$image_name;
 
-        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    }
 
+move_uploaded_file(
 
-    /* Product top section */
+$_FILES["image"]["tmp_name"],
 
-    .product-card-top {
-        display: flex;
+$upload
 
-        align-items: center;
+);
 
-        gap: 15px;
 
-        margin-bottom: 15px;
-    }
+$image=$image_name;
 
-
-    .product-card-image {
-        width: 75px;
-        height: 75px;
-
-        object-fit: cover;
-
-        border-radius: 10px;
-
-        flex-shrink: 0;
-    }
-
-
-    .product-card-title {
-        font-size: 18px;
-
-        font-weight: 600;
-
-        margin: 0;
-    }
-
-
-    .product-card-code {
-        color: #6c757d;
-
-        font-size: 13px;
-
-        margin-top: 4px;
-    }
-
-
-    /* Details */
-
-    .product-details {
-        border-top: 1px solid #eee;
-
-        padding-top: 12px;
-    }
-
-
-    .product-detail {
-        display: flex;
-
-        justify-content: space-between;
-
-        padding: 6px 0;
-
-        font-size: 14px;
-    }
-
-
-    .product-detail-label {
-        color: #6c757d;
-    }
-
-
-    .product-detail-value {
-        font-weight: 500;
-
-        text-align: right;
-    }
-
-
-    /* Actions */
-
-    .product-actions {
-        display: flex;
-
-        gap: 10px;
-
-        margin-top: 15px;
-    }
-
-
-    .product-actions button {
-        flex: 1;
-    }
 
 }
 
 
-/* =========================================
-   SMALL MOBILE
-========================================= */
-
-@media (max-width: 480px) {
-
-    .page-title {
-        font-size: 19px;
-    }
 
 
-    .action-buttons .btn {
-        font-size: 13px;
-    }
+$sql = "
+
+INSERT INTO products
+
+(
+product_name,
+product_code,
+category,
+brand,
+purchase_price,
+selling_price,
+quantity,
+unit,
+description,
+image
+)
+
+VALUES
+
+(?,?,?,?,?,?,?,?,?,?)
+
+";
 
 
-    .product-card {
-        padding: 12px;
-    }
 
-}
+$stmt=mysqli_prepare($conn,$sql);
 
 
-/* =========================================
-   TOAST NOTIFICATION
-========================================= */
 
-.toast {
-    border-radius: 10px;
+if(!$stmt){
 
-    border: none;
-
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-}
-
-.toast-body {
-    font-size: 14px;
-}
-
-
-@media (max-width: 576px) {
-
-    .toast-container {
-        width: 100%;
-        padding: 10px !important;
-    }
-
-    .toast {
-        width: 100%;
-    }
+die(
+"SQL ERROR: ".mysqli_error($conn)
+);
 
 }
 
-</style>
-</head>
 
-<body class="bg-light">
-<!-- Toast Notification -->
-<div class="toast-container position-fixed top-0 end-0 p-3"
-     style="z-index:9999;">
 
-    <div id="notificationToast"
-         class="toast"
-         role="alert"
-         aria-live="assertive"
-         aria-atomic="true">
 
-        <div class="toast-header">
+mysqli_stmt_bind_param(
 
-            <i id="toastIcon"
-               class="bi bi-check-circle-fill me-2 text-success"></i>
+$stmt,
 
-            <strong id="toastTitle" class="me-auto">
-                Success
-            </strong>
+"ssssddisss",
 
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="toast">
-            </button>
+$product_name,
 
-        </div>
+$product_code,
 
-        <div id="toastMessage" class="toast-body">
-            Operation completed successfully.
-        </div>
+$category,
 
-    </div>
+$brand,
 
-</div>
-<div class="page-header mb-4">
+$purchase_price,
 
-<h2>
-📦 Product Management System
-</h2>
+$selling_price,
 
+$quantity,
 
-<div class="action-buttons">
+$unit,
 
-<div>
+$description,
 
-<button
-type="button"
-id="addProduct"
-class="btn btn-primary"
-data-bs-toggle="modal"
-data-bs-target="#productModal">
+$image
 
-<i class="bi bi-plus-circle-fill"></i>
-Add Product
-
-</button>
-
-<a href="Auth/logout.php" class="btn btn-danger">
-Logout
-</a>
-
-</div>
-
-</div>
-
-<!-- ==========================
-     DESKTOP PRODUCT TABLE
-=========================== -->
-
-<div class="desktop-products">
-
-<div class="table-responsive">
-
-<table class="table table-bordered table-hover product-table">
-
-<thead class="table-dark">
-
-<tr>
-
-<th>ID</th>
-<th>Image</th>
-<th>Product</th>
-<th>Code</th>
-<th>Category</th>
-<th>Brand</th>
-<th>Purchase</th>
-<th>Selling</th>
-<th>Qty</th>
-<th>Unit</th>
-<th>Action</th>
-
-</tr>
-
-</thead>
-
-
-<tbody id="productTableBody">
-
-
-<?php
-
-if(mysqli_num_rows($result)>0){
-
-while($row=mysqli_fetch_assoc($result)){
-
-?>
-
-<tr>
-
-<td>
-<?= $row['id']; ?>
-</td>
-
-
-<td>
-
-<?php if($row['image']!=""){ ?>
-
-<img src="assets/uploads/<?= $row['image']; ?>"
-class="product-image rounded">
-
-<?php } ?>
-
-</td>
-
-
-<td>
-<?= $row['product_name']; ?>
-</td>
-
-
-<td>
-<?= $row['product_code']; ?>
-</td>
-
-
-<td>
-<?= $row['category']; ?>
-</td>
-
-
-<td>
-<?= $row['brand']; ?>
-</td>
-
-
-<td>
-₹<?= $row['purchase_price']; ?>
-</td>
-
-
-<td>
-₹<?= $row['selling_price']; ?>
-</td>
-
-
-<td>
-<?= $row['quantity']; ?>
-</td>
-
-
-<td>
-<?= $row['unit']; ?>
-</td>
-
-
-<td>
-
-
-<button
-class="btn btn-warning btn-sm editProduct"
-data-id="<?= $row['id']; ?>">
-
-<i class="bi bi-pencil-square"></i>
-
-</button>
-
-
-
-<button
-class="btn btn-danger btn-sm deleteProduct"
-data-id="<?= $row['id']; ?>">
-
-<i class="bi bi-trash"></i>
-
-</button>
-
-
-</td>
-
-
-</tr>
-
-
-<?php
-
-}
-
-}else{
-
-?>
-
-<tr>
-
-<td colspan="11" class="text-center">
-
-No Products Found
-
-</td>
-
-</tr>
-
-
-<?php
-
-}
-
-?>
-
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-
-
-
-<!-- ==========================
-     MOBILE PRODUCT CARDS
-=========================== -->
-
-
-<div class="mobile-products">
-
-
-<?php
-
-
-$result_mobile = mysqli_query($conn,
-"SELECT * FROM products ORDER BY id DESC"
 );
 
 
 
-if(mysqli_num_rows($result_mobile)>0){
+mysqli_stmt_execute($stmt);
 
 
-while($row=mysqli_fetch_assoc($result_mobile)){
+
+header("Location:index.php");
+
+exit();
+
+
+}
+
+
+
+
+
+
+// =======================
+// DELETE PRODUCT
+// =======================
+
+
+if(isset($_GET["delete"])){
+
+
+$id=$_GET["delete"];
+
+
+
+$stmt=mysqli_prepare(
+
+$conn,
+
+"DELETE FROM products WHERE id=?"
+
+);
+
+
+
+mysqli_stmt_bind_param(
+
+$stmt,
+
+"i",
+
+$id
+
+);
+
+
+
+mysqli_stmt_execute($stmt);
+
+
+
+header("Location:index.php");
+
+exit();
+
+
+}
+
+
+
+
+
+// =======================
+// FETCH PRODUCTS
+// =======================
+
+
+$result=mysqli_query(
+
+$conn,
+
+"SELECT * FROM products ORDER BY id DESC"
+
+);
+
 
 
 ?>
+<!DOCTYPE html>
+
+<html lang="en">
 
 
-<div class="product-card">
+<head>
 
 
-<div class="product-card-top">
+<meta charset="UTF-8">
 
 
-<?php if($row['image']!=""){ ?>
-
-<img src="assets/uploads/<?= $row['image']; ?>"
-class="product-card-image">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
-<?php } ?>
+
+<title>
+Product Management
+</title>
+
+
+
+
+<!-- Bootstrap CSS -->
+
+<link 
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+
+
+<!-- Bootstrap Icons -->
+
+<link 
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+rel="stylesheet">
+
+
+
+
+
+
+<style>
+
+
+*{
+
+box-sizing:border-box;
+
+}
+
+
+
+body{
+
+
+margin:0;
+
+background:#f4f6f9;
+
+font-family:
+
+Arial, Helvetica, sans-serif;
+
+
+}
+
+
+
+
+
+/* NAVBAR */
+
+
+.navbar{
+
+
+background:
+
+linear-gradient(
+135deg,
+#667eea,
+#764ba2
+);
+
+
+padding:15px 0;
+
+
+}
+
+
+
+.navbar-brand{
+
+
+color:white!important;
+
+font-size:24px;
+
+font-weight:bold;
+
+
+}
+
+
+
+
+
+
+/* USER AREA */
+
+
+.user-area{
+
+
+color:white;
+
+font-size:15px;
+
+
+}
+
+
+
+
+
+/* MAIN CONTAINER */
+
+
+.container-box{
+
+
+padding:30px;
+
+}
+
+
+
+
+
+/* PAGE HEADER */
+
+
+.page-header{
+
+
+background:white;
+
+padding:25px;
+
+border-radius:15px;
+
+box-shadow:
+
+0 5px 20px rgba(0,0,0,.08);
+
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+
+}
+
+
+
+.page-header h2{
+
+
+margin:0;
+
+font-weight:bold;
+
+
+}
+
+
+
+
+
+
+
+/* ADD BUTTON */
+
+
+.add-btn{
+
+
+background:#667eea;
+
+color:white;
+
+border:none;
+
+padding:12px 20px;
+
+border-radius:10px;
+
+font-weight:bold;
+
+
+}
+
+
+
+.add-btn:hover{
+
+
+background:#5568d9;
+
+color:white;
+
+
+}
+
+
+
+
+
+
+/* CARD */
+
+
+.card-box{
+
+
+background:white;
+
+margin-top:25px;
+
+padding:25px;
+
+border-radius:15px;
+
+
+box-shadow:
+
+0 5px 20px rgba(0,0,0,.08);
+
+
+}
+
+
+
+
+
+
+
+/* PRODUCT IMAGE */
+
+
+.product-img{
+
+
+width:60px;
+
+height:60px;
+
+object-fit:cover;
+
+border-radius:10px;
+
+border:1px solid #ddd;
+
+
+}
+
+
+
+
+
+/* TABLE */
+
+
+.table{
+
+
+vertical-align:middle;
+
+
+}
+
+
+
+.table th{
+
+
+background:#667eea;
+
+color:white;
+
+
+}
+
+
+
+
+
+/* BUTTONS */
+
+
+.btn{
+
+
+border-radius:8px;
+
+
+}
+
+
+
+
+
+
+/* MOBILE RESPONSIVE */
+
+
+@media(max-width:768px){
+
+
+
+.page-header{
+
+
+flex-direction:column;
+
+align-items:flex-start;
+
+gap:15px;
+
+
+}
+
+
+
+.table{
+
+
+font-size:13px;
+
+
+}
+
+
+
+.product-img{
+
+
+width:45px;
+
+height:45px;
+
+
+}
+
+
+
+.container-box{
+
+
+padding:15px;
+
+
+}
+
+
+
+}
+
+
+
+</style>
+
+
+
+</head>
+
+
+<body>
+    <!-- NAVBAR -->
+
+<nav class="navbar">
+
+
+<div class="container">
+
+
+<a class="navbar-brand">
+
+
+<i class="bi bi-box-seam"></i>
+
+Product Management
+
+
+</a>
+
+
+
+
+
+<div class="user-area">
+
+
+Welcome,
+
+<strong>
+
+<?= htmlspecialchars($username); ?>
+
+</strong>
+
+
+
+
+<a href="auth/logout.php"
+
+class="btn btn-danger btn-sm ms-3">
+
+
+<i class="bi bi-box-arrow-right"></i>
+
+Logout
+
+
+</a>
+
+
+</div>
+
+
+
+</div>
+
+
+</nav>
+
+
+
+
+
+
+
+<!-- MAIN CONTENT -->
+
+
+<div class="container container-box">
+
+
+
+
+
+<!-- PAGE HEADER -->
+
+
+<div class="page-header">
+
 
 
 <div>
 
-<h5 class="product-card-title">
 
-<?= $row['product_name']; ?>
+<h2>
+
+Products
+
+</h2>
+
+
+<p class="text-muted mb-0">
+
+Manage your products here
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+<button
+
+class="btn add-btn"
+
+data-bs-toggle="modal"
+
+data-bs-target="#addProductModal">
+
+
+<i class="bi bi-plus-circle"></i>
+
+Add Product
+
+
+</button>
+
+
+
+</div>
+
+
+
+
+
+
+
+<!-- PRODUCT CARD START -->
+
+
+<div class="card-box">
+
+
+
+<h4 class="mb-3">
+
+
+All Products
+
+
+<span class="badge bg-primary">
+
+
+<?= mysqli_num_rows($result); ?>
+
+
+Products
+
+
+</span>
+
+
+</h4>
+<!-- ADD PRODUCT MODAL -->
+
+
+<div class="modal fade" id="addProductModal">
+
+
+<div class="modal-dialog modal-lg">
+
+
+<div class="modal-content">
+
+
+
+<form method="POST" enctype="multipart/form-data">
+
+
+
+
+
+<div class="modal-header">
+
+
+<h5 class="modal-title">
+
+Add New Product
 
 </h5>
 
 
-<div class="product-card-code">
 
-Code:
-<?= $row['product_code']; ?>
+<button
+
+type="button"
+
+class="btn-close"
+
+data-bs-dismiss="modal">
+
+</button>
+
+
 
 </div>
 
-</div>
+
+
+
+
+
+
+<div class="modal-body">
+
+
+
+<div class="row">
+
+
+
+<!-- PRODUCT NAME -->
+
+<div class="col-md-6 mb-3">
+
+
+<label class="form-label">
+
+Product Name
+
+</label>
+
+
+<input
+
+type="text"
+
+name="product_name"
+
+class="form-control"
+
+placeholder="Enter product name"
+
+required>
 
 
 </div>
@@ -830,74 +859,334 @@ Code:
 
 
 
-<div class="product-details">
 
 
-<div class="product-detail">
+<!-- PRODUCT CODE -->
 
-<span class="product-detail-label">
+<div class="col-md-6 mb-3">
+
+
+<label class="form-label">
+
+Product Code
+
+</label>
+
+
+<input
+
+type="text"
+
+name="product_code"
+
+class="form-control"
+
+placeholder="Enter product code"
+
+required>
+
+
+</div>
+
+
+
+
+
+
+<!-- CATEGORY -->
+
+
+<div class="col-md-6 mb-3">
+
+
+<label class="form-label">
+
 Category
-</span>
 
-<span class="product-detail-value">
-<?= $row['category']; ?>
-</span>
+</label>
+
+
+<input
+
+type="text"
+
+name="category"
+
+class="form-control"
+
+placeholder="Category">
+
 
 </div>
 
 
 
-<div class="product-detail">
 
-<span class="product-detail-label">
+
+
+
+<!-- BRAND -->
+
+
+<div class="col-md-6 mb-3">
+
+
+<label class="form-label">
+
 Brand
-</span>
 
-<span class="product-detail-value">
-<?= $row['brand']; ?>
-</span>
+</label>
+
+
+<input
+
+type="text"
+
+name="brand"
+
+class="form-control"
+
+placeholder="Brand">
+
 
 </div>
 
 
 
-<div class="product-detail">
 
-<span class="product-detail-label">
-Purchase
-</span>
 
-<span class="product-detail-value">
-₹<?= $row['purchase_price']; ?>
-</span>
+
+
+<!-- PURCHASE PRICE -->
+
+
+<div class="col-md-6 mb-3">
+
+
+<label class="form-label">
+
+Purchase Price
+
+</label>
+
+
+<input
+
+type="number"
+
+step="0.01"
+
+name="purchase_price"
+
+class="form-control"
+
+placeholder="0.00">
+
 
 </div>
 
 
 
-<div class="product-detail">
 
-<span class="product-detail-label">
-Selling
-</span>
 
-<span class="product-detail-value">
-₹<?= $row['selling_price']; ?>
-</span>
+
+
+<!-- SELLING PRICE -->
+
+
+<div class="col-md-6 mb-3">
+
+
+<label class="form-label">
+
+Selling Price
+
+</label>
+
+
+<input
+
+type="number"
+
+step="0.01"
+
+name="selling_price"
+
+class="form-control"
+
+placeholder="0.00">
+
 
 </div>
 
 
 
-<div class="product-detail">
 
-<span class="product-detail-label">
+
+
+
+<!-- QUANTITY -->
+
+
+<div class="col-md-6 mb-3">
+
+
+<label class="form-label">
+
 Quantity
-</span>
 
-<span class="product-detail-value">
-<?= $row['quantity']; ?> <?= $row['unit']; ?>
-</span>
+</label>
+
+
+<input
+
+type="number"
+
+name="quantity"
+
+class="form-control"
+
+placeholder="Quantity">
+
+
+</div>
+
+
+
+
+
+
+
+<!-- UNIT -->
+
+
+<div class="col-md-6 mb-3">
+
+
+<label class="form-label">
+
+Unit
+
+</label>
+
+
+<select
+
+name="unit"
+
+class="form-select">
+
+
+
+<option value="Nos">
+
+Nos
+
+</option>
+
+
+
+<option value="Kg">
+
+Kg
+
+</option>
+
+
+
+<option value="Box">
+
+Box
+
+</option>
+
+
+
+<option value="Pack">
+
+Pack
+
+</option>
+
+
+
+<option value="Litre">
+
+Litre
+
+</option>
+
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- DESCRIPTION -->
+
+
+<div class="col-12 mb-3">
+
+
+<label class="form-label">
+
+Description
+
+</label>
+
+
+<textarea
+
+name="description"
+
+class="form-control"
+
+rows="3"
+
+placeholder="Product description">
+
+</textarea>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- IMAGE -->
+
+
+<div class="col-12 mb-3">
+
+
+<label class="form-label">
+
+Product Image
+
+</label>
+
+
+
+<input
+
+type="file"
+
+name="image"
+
+class="form-control"
+
+accept="image/*">
+
 
 </div>
 
@@ -907,430 +1196,401 @@ Quantity
 
 
 
+</div>
 
-<div class="product-actions">
+
+
+
+
+
+
+<div class="modal-footer">
 
 
 <button
-class="btn btn-warning editProduct"
-data-id="<?= $row['id']; ?>">
 
-<i class="bi bi-pencil-square"></i>
-Edit
+type="button"
+
+class="btn btn-secondary"
+
+data-bs-dismiss="modal">
+
+
+Close
+
 
 </button>
 
 
 
-<button
-class="btn btn-danger deleteProduct"
-data-id="<?= $row['id']; ?>">
 
-<i class="bi bi-trash"></i>
-Delete
+
+<button
+
+type="submit"
+
+name="add_product"
+
+class="btn btn-primary">
+
+
+<i class="bi bi-save"></i>
+
+Save Product
+
 
 </button>
 
 
-</div>
-
-
 
 </div>
 
+
+
+
+
+</form>
+
+
+
+
+</div>
+
+
+</div>
+
+
+</div>
+<!-- PRODUCT TABLE -->
+
+
+<div class="table-responsive">
+
+
+
+<table class="table table-bordered table-hover">
+
+
+<thead>
+
+
+<tr>
+
+
+<th>ID</th>
+
+<th>Image</th>
+
+<th>Product</th>
+
+<th>Code</th>
+
+<th>Category</th>
+
+<th>Brand</th>
+
+<th>Purchase</th>
+
+<th>Selling</th>
+
+<th>Qty</th>
+
+<th>Unit</th>
+
+<th>Action</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+
+<tbody>
+
+
+
+<?php if(mysqli_num_rows($result)>0): ?>
+
+
+
+<?php while($row=mysqli_fetch_assoc($result)): ?>
+
+
+
+<tr>
+
+
+
+<td>
+
+<?= $row["id"]; ?>
+
+</td>
+
+
+
+
+
+
+<!-- IMAGE -->
+
+
+<td>
 
 <?php
 
+if(!empty($row['image'])) {
 
-}
+?>
 
+<img
+src="uploads/<?=$row['image'];?>"
+width="80"
+height="80"
+style="object-fit:cover;border-radius:8px;">
+
+<?php
 
 }else{
 
-
-?>
-
-
-<div class="text-center">
-
-No Products Found
-
-</div>
-
-
-<?php
+echo "No Image";
 
 }
 
 ?>
 
+</td>
+
+
+
+
+
+
+<!-- PRODUCT NAME -->
+
+
+<td>
+
+<?= htmlspecialchars($row["product_name"]); ?>
+
+
+</td>
+
+
+
+
+
+
+<!-- CODE -->
+
+
+<td>
+
+<?= htmlspecialchars($row["product_code"]); ?>
+
+
+</td>
+
+
+
+
+
+
+<!-- CATEGORY -->
+
+
+<td>
+
+<?= htmlspecialchars($row["category"]); ?>
+
+
+</td>
+
+
+
+
+
+
+<!-- BRAND -->
+
+
+<td>
+
+<?= htmlspecialchars($row["brand"]); ?>
+
+
+</td>
+
+
+
+
+
+
+<!-- PURCHASE -->
+
+
+<td>
+
+₹ <?= $row["purchase_price"]; ?>
+
+
+</td>
+
+
+
+
+
+
+<!-- SELLING -->
+
+
+<td>
+
+₹ <?= $row["selling_price"]; ?>
+
+
+</td>
+
+
+
+
+
+
+<!-- QUANTITY -->
+
+
+<td>
+
+<?= $row["quantity"]; ?>
+
+
+</td>
+
+
+
+
+
+
+<!-- UNIT -->
+
+
+<td>
+
+<?= $row["unit"]; ?>
+
+
+</td>
+
+
+
+
+
+
+<!-- ACTION -->
+
+
+<td>
+
+
+<a href="ajax/edit.php?id=<?= $row['id']; ?>"
+class="btn btn-success btn-sm">
+
+<i class="bi bi-pencil"></i>
+Edit
+
+</a>
+
+
+
+
+
+<a
+
+href="index.php?delete=<?= $row['id']; ?>"
+
+class="btn btn-danger btn-sm"
+
+onclick="return confirm('Are you sure you want to delete this product?');">
+
+
+<i class="bi bi-trash"></i>
+
+Delete
+
+
+</a>
+
+
+
+</td>
+
+
+
+
+
+</tr>
+
+
+
+<?php endwhile; ?>
+
+
+
+<?php else: ?>
+
+
+
+<tr>
+
+
+<td colspan="11"
+
+class="text-center text-danger">
+
+
+No Products Found
+
+
+</td>
+
+
+</tr>
+
+
+
+<?php endif; ?>
+
+
+
+</tbody>
+
+
+
+</table>
+
+
 
 </div>
-<!-- Add / Edit Product Modal -->
 
-<div class="modal fade" id="productModal" tabindex="-1">
 
-  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
 
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h4 class="modal-title" id="modalTitle">
-                    Add Product
-                </h4>
-
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
-
-            </div>
-
-            <div class="modal-body">
-
-                <form id="productForm" enctype="multipart/form-data">
-
-                    <!-- Hidden ID -->
-                   <input type="hidden" name="id" id="product_id">
-
-                    <div class="row">
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Product Name</label>
-                            <input type="text"
-                                   class="form-control"
-                                   name="product_name"
-                                   required>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Product Code</label>
-                            <input type="text"
-                                   class="form-control"
-                                   name="product_code"
-                                   required>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Category</label>
-                            <input type="text"
-                                   class="form-control"
-                                   name="category"
-                                   required>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Brand</label>
-                            <input type="text"
-                                   class="form-control"
-                                   name="brand"
-                                   required>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">
-                                Purchase Price
-                            </label>
-
-                            <input type="number"
-                                   class="form-control"
-                                   name="purchase_price"
-                                   required>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">
-                                Selling Price
-                            </label>
-
-                            <input type="number"
-                                   class="form-control"
-                                   name="selling_price"
-                                   required>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-
-                            <label class="form-label">
-                                Quantity
-                            </label>
-
-                            <input type="number"
-                                   class="form-control"
-                                   name="quantity"
-                                   required>
-
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-
-                            <label class="form-label">
-                                Unit
-                            </label>
-
-                            <select class="form-select"
-                                    name="unit"
-                                    required>
-
-                                <option value="">
-                                    Select Unit
-                                </option>
-
-                                <option value="Nos">
-                                    Nos
-                                </option>
-
-                                <option value="Kg">
-                                    Kg
-                                </option>
-
-                                <option value="Box">
-                                    Box
-                                </option>
-
-                                <option value="Pack">
-                                    Pack
-                                </option>
-
-                                <option value="Litre">
-                                    Litre
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                        <div class="col-md-12 mb-3">
-
-                            <label class="form-label">
-                                Description
-                            </label>
-
-                            <textarea class="form-control"
-                                      rows="3"
-                                      name="description"></textarea>
-
-                        </div>
-
-                        <div class="col-md-12 mb-3">
-
-                            <label class="form-label">
-                                Product Image
-                            </label>
-
-                            <input type="file"
-                                   class="form-control"
-                                   name="image"
-                                   accept="image/*">
-
-                        </div>
-
-                    </div>
-
-                </form>
-
-            </div>
-
-            <div class="modal-footer">
-
-                <button type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal">
-                    Close
-                </button>
-
-               <button
-    type="button"
-    id="saveProduct"
-    class="btn btn-success">
-    Save Product
-</button>
-
-            </div>
-
-        </div>
-
-    </div>
 
 </div>
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
+<!-- CARD BOX END -->
+ <!-- Bootstrap JavaScript -->
 
-$(document).ready(function(){
-
-    // ==========================
-    // SAVE / UPDATE PRODUCT
-    // ==========================
-
-    $("#saveProduct").click(function(){
-
-        let productName = $("input[name='product_name']").val().trim();
-        let productCode = $("input[name='product_code']").val().trim();
-
-        if(productName==""){
-            alert("Product Name is required");
-            return;
-        }
-
-        if(productCode==""){
-            alert("Product Code is required");
-            return;
-        }
-
-        let formData = new FormData($("#productForm")[0]);
-
-        let url = "ajax/save_product.php";
-
-        if($("#product_id").val()!=""){
-            url = "ajax/update_product.php";
-        }
-
-        $.ajax({
-
-            url:url,
-
-            type:"POST",
-
-            data:formData,
-
-            processData:false,
-
-            contentType:false,
-
-            success:function(response){
-
-                if(response.trim()=="success"){
-
-                    alert("Product Saved Successfully");
-
-                    location.reload();
-
-                }else{
-
-                    alert(response);
-
-                }
-
-            }
-
-        });
-
-    });
-
-
-
-    // ==========================
-    // DELETE PRODUCT
-    // ==========================
-
-    $(document).on("click",".deleteProduct",function(){
-
-        let id=$(this).data("id");
-
-        if(confirm("Are you sure you want to delete this product?")){
-
-            $.ajax({
-
-                url:"ajax/delete_product.php",
-
-                type:"POST",
-
-                data:{id:id},
-
-                success:function(response){
-
-                    if(response.trim()=="success"){
-
-                        alert("Product Deleted Successfully");
-
-                        location.reload();
-
-                    }else{
-
-                        alert(response);
-
-                    }
-
-                }
-
-            });
-
-        }
-
-    });
-
-
-
-    // ==========================
-    // EDIT PRODUCT
-    // ==========================
-
-    $(document).on("click", ".editProduct", function () {
-
-    let id = $(this).data("id");
-
-    $.ajax({
-
-        url: "ajax/get_product.php",
-        type: "POST",
-        data: { id: id },
-        dataType: "json",
-
-        success: function (product) {
-
-            $("#product_id").val(product.id);
-
-            $("input[name='product_name']").val(product.product_name);
-            $("input[name='product_code']").val(product.product_code);
-            $("input[name='category']").val(product.category);
-            $("input[name='brand']").val(product.brand);
-            $("input[name='purchase_price']").val(product.purchase_price);
-            $("input[name='selling_price']").val(product.selling_price);
-            $("input[name='quantity']").val(product.quantity);
-            $("select[name='unit']").val(product.unit);
-            $("textarea[name='description']").val(product.description);
-
-            $("#modalTitle").text("Edit Product");
-            $("#saveProduct").text("Update Product");
-
-            var modal = new bootstrap.Modal(document.getElementById("productModal"));
-            modal.show();
-
-        }, // <-- comma here
-
-        error: function () {
-
-            alert("Unable to load product details.");
-
-        }
-
-    });
-
-});
-
-
-    // ==========================
-    // RESET FORM WHEN ADD BUTTON IS CLICKED
-    // ==========================
-
-$("#addProduct").click(function(){
-
-        $("#productForm")[0].reset();
-
-        $("#product_id").val("");
-
-        $("#modalTitle").text("Add Product");
-
-        $("#saveProduct").text("Save Product");
-
-    });
-
-});
-
+<script 
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
 </script>
-</body>
-</html>
 
+
+
+</body>
+
+
+</html>

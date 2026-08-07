@@ -1,44 +1,42 @@
-/* Responsive Design */
-
-.container {
-    width: 90%;
-    margin: auto;
+body
+{
+    font-family: Arial;
+    background:#f2f2f2;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+
+.container
+{
+    width:90%;
+    margin:40px auto;
+    background:white;
+    padding:30px;
 }
 
-.table-responsive {
-    overflow-x: auto;
+
+h1
+{
+    text-align:center;
 }
 
-@media screen and (max-width: 768px) {
 
-    h1 {
-        font-size: 25px;
-    }
+table
+{
+    width:100%;
+    border-collapse:collapse;
+}
 
-    .header {
-        flex-direction: column;
-        gap: 15px;
-    }
 
-    .btn {
-        font-size: 14px;
-        padding: 8px 12px;
-    }
+th
+{
+    background:#333;
+    color:white;
+    padding:10px;
+}
 
-    table {
-        font-size: 14px;
-        min-width: 1000px;
-    }
 
-    img {
-        width: 60px;
-        height: 60px;
-        object-fit: cover;
-    }
-
+td
+{
+    padding:10px;
+    border:1px solid #ddd;
 }

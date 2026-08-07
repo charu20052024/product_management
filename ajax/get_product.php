@@ -1,14 +1,47 @@
 <?php
-include "../includes/db.php";
 
-if(isset($_POST['id'])){
+require_once "../includes/db.php";
 
-    $id = intval($_POST['id']);
 
-    $result = mysqli_query($conn, "SELECT * FROM products WHERE id='$id'");
+$id=$_GET['id'];
 
-    if(mysqli_num_rows($result)>0){
-        echo json_encode(mysqli_fetch_assoc($result));
-    }
-}
+
+
+$stmt=mysqli_prepare(
+
+$conn,
+
+"SELECT * FROM products WHERE id=?"
+
+);
+
+
+
+mysqli_stmt_bind_param(
+
+$stmt,
+
+"i",
+
+$id
+
+);
+
+
+
+mysqli_stmt_execute($stmt);
+
+
+
+$result=mysqli_stmt_get_result($stmt);
+
+
+
+$data=mysqli_fetch_assoc($result);
+
+
+
+echo json_encode($data);
+
+
 ?>

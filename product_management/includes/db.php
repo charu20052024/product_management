@@ -1,16 +1,33 @@
 <?php
 
-$host = getenv("MYSQLHOST");
-$user = getenv("MYSQLUSER");
-$password = getenv("MYSQLPASSWORD");
-$database = getenv("MYSQLDATABASE");
-$port = getenv("MYSQLPORT");
+$host = "localhost";
+$user = "root";
+$password = "";
+$database = "product_management";
 
-$conn = mysqli_connect($host, $user, $password, $database, $port);
+
+$conn = mysqli_connect(
+    $host,
+    $user,
+    $password,
+    $database
+);
+
 
 if (!$conn) {
-    die("Connection Failed: " . mysqli_connect_error());
+
+    die(
+        "Database Connection Failed: " .
+        mysqli_connect_error()
+    );
+
 }
 
-echo "Database Connected";
+
+// Set charset
+mysqli_set_charset(
+    $conn,
+    "utf8mb4"
+);
+
 ?>

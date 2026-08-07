@@ -1,59 +1,112 @@
 <?php
-include "../includes/db.php";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+require_once "../includes/db.php";
 
-    $id = $_POST['id'];
-    $product_name = trim($_POST['product_name']);
-    $product_code = trim($_POST['product_code']);
-    $category = trim($_POST['category']);
-    $brand = trim($_POST['brand']);
-    $purchase_price = $_POST['purchase_price'];
-    $selling_price = $_POST['selling_price'];
-    $quantity = $_POST['quantity'];
-    $unit = trim($_POST['unit']);
-    $description = trim($_POST['description']);
 
-    $sql = "UPDATE products SET
-                product_name = ?,
-                product_code = ?,
-                category = ?,
-                brand = ?,
-                purchase_price = ?,
-                selling_price = ?,
-                quantity = ?,
-                unit = ?,
-                description = ?
-            WHERE id = ?";
+$id=$_POST['id'];
 
-    $stmt = mysqli_prepare($conn, $sql);
 
-    if (!$stmt) {
-        die("Prepare Failed: " . mysqli_error($conn));
-    }
+$product_name=$_POST['product_name'];
 
-    mysqli_stmt_bind_param(
-        $stmt,
-        "ssssddissi",
-        $product_name,
-        $product_code,
-        $category,
-        $brand,
-        $purchase_price,
-        $selling_price,
-        $quantity,
-        $unit,
-        $description,
-        $id
-    );
+$product_code=$_POST['product_code'];
 
-    if (mysqli_stmt_execute($stmt)) {
-        echo "Success";
-    } else {
-        echo "Error: " . mysqli_stmt_error($stmt);
-    }
+$category=$_POST['category'];
 
-    mysqli_stmt_close($stmt);
-    mysqli_close($conn);
+$brand=$_POST['brand'];
+
+$purchase_price=$_POST['purchase_price'];
+
+$selling_price=$_POST['selling_price'];
+
+$quantity=$_POST['quantity'];
+
+$unit=$_POST['unit'];
+
+$description=$_POST['description'];
+
+
+
+
+
+$stmt=mysqli_prepare(
+
+$conn,
+
+"UPDATE products SET
+
+
+product_name=?,
+
+product_code=?,
+
+category=?,
+
+brand=?,
+
+purchase_price=?,
+
+selling_price=?,
+
+quantity=?,
+
+unit=?,
+
+description=?
+
+
+WHERE id=?
+
+"
+
+);
+
+
+
+
+mysqli_stmt_bind_param(
+
+$stmt,
+
+"ssssddissi",
+
+$product_name,
+
+$product_code,
+
+$category,
+
+$brand,
+
+$purchase_price,
+
+$selling_price,
+
+$quantity,
+
+$unit,
+
+$description,
+
+$id
+
+);
+
+
+
+if(mysqli_stmt_execute($stmt)){
+
+
+echo "success";
+
+
+}else{
+
+
+echo "error";
+
+
 }
+
+
+
 ?>
